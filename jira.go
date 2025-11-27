@@ -187,6 +187,7 @@ func (c *Client) NewRequestWithContext(ctx context.Context, method, urlStr strin
 	req.Header.Set("Content-Type", "application/json")
 
 	// Set authentication information
+
 	if c.Authentication.authType == authTypeSession {
 		// Set session cookie if there is one
 		if c.session != nil {
@@ -350,6 +351,9 @@ func (r *Response) populatePageValues(v interface{}) {
 	case *searchResultV2:
 		r.IsLast = value.IsLast
 		r.NextPageToken = value.NextPageToken
+	case *searchResultV3:
+		r.IsLast = value.IsLast
+		r.NextPageToken = value.NextPageToken
 	case *groupMembersResult:
 		r.StartAt = value.StartAt
 		r.MaxResults = value.MaxResults
@@ -372,7 +376,6 @@ type BasicAuthTransport struct {
 // basic auth and return the RoundTripper for this transport type.
 func (t *BasicAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req2 := cloneRequest(req) // per RoundTripper contract
-
 	req2.SetBasicAuth(t.Username, t.Password)
 	return t.transport().RoundTrip(req2)
 }
